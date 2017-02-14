@@ -72,7 +72,7 @@ BOOL isPad() {
     
 //    NSURL* url =  [NSURL URLWithString:@"http://www.youtube.com/watch?v=U7dOBeyr5bk"];
     
-    useFrontCamera = NO;
+    useFrontCamera = YES;
     
     
     
@@ -92,7 +92,7 @@ BOOL isPad() {
         
         
         
-        searchEnginePref = (!isPad())?@"http://www.google.com":@"http://www.bing.com";
+        searchEnginePref = (!isPad())?@"https://www.google.com":@"https://www.bing.com";
         [[NSUserDefaults standardUserDefaults] setValue:searchEnginePref forKey:@"searchEngine"];
         
          [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"saveToCamera"];
@@ -941,6 +941,10 @@ BOOL isPad() {
             continue;
         }
     }
+    
+    
+    [self buttonAction:self.startStopButton];
+    
 }
 - (void) activateCameraFeed
 {
@@ -957,7 +961,7 @@ BOOL isPad() {
     [captureOutput setSampleBufferDelegate:self queue:queue];
     [captureOutput setVideoSettings:videoSettings];
     
-    dispatch_release(queue);
+//    dispatch_release(queue);
     
     AVCaptureDevice *selectedCamera;
     
@@ -1246,14 +1250,14 @@ BOOL isPad() {
 }
 
 - (IBAction)helpButtonAction:(id)sender {
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]]];
+    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]]];
     
     
 }
 
 - (IBAction)facebookButtonAction:(id)sender {
     
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]]];
+    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]]];
 
 }
 

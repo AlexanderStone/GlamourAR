@@ -24,7 +24,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-      [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://luciddreamingapp.com/augmented-reality/"]]];
+      [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/"]]];
     
 }
 

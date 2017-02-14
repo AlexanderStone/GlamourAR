@@ -50,7 +50,7 @@
     searchEnginePref = [[NSUserDefaults standardUserDefaults] stringForKey:@"searchEngine"];
     
     if(searchEnginePref ==nil ||searchEnginePref.length ==0){
-        searchEnginePref = @"http://www.google.com";
+        searchEnginePref = @"https://www.google.com";
         [[NSUserDefaults standardUserDefaults] setValue:searchEnginePref forKey:@"searchEngine"];
     }
     
@@ -149,19 +149,19 @@
 
 
 - (IBAction)googleButton:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setValue: @"http://www.google.com" forKey:@"searchEngine"];
-    searchEngineField.text = @"http://www.google.com" ;
+    [[NSUserDefaults standardUserDefaults] setValue: @"https://www.google.com" forKey:@"searchEngine"];
+    searchEngineField.text = @"https://www.google.com" ;
     
 }
 
 - (IBAction)bingButton:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setValue: @"http://www.bing.com" forKey:@"searchEngine"];
-    searchEngineField.text = @"http://www.bing.com" ;
+    [[NSUserDefaults standardUserDefaults] setValue: @"https://www.bing.com" forKey:@"searchEngine"];
+    searchEngineField.text = @"https://www.bing.com" ;
 }
 
 - (IBAction)yahooButton:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setValue: @"http://www.yahoo.com" forKey:@"searchEngine"];
-    searchEngineField.text = @"http://www.yahoo.com" ;
+    [[NSUserDefaults standardUserDefaults] setValue: @"https://www.yahoo.com" forKey:@"searchEngine"];
+    searchEngineField.text = @"https://www.yahoo.com" ;
 }
 
 - (IBAction)saveToCameraRollPrefChanged:(id)sender {
