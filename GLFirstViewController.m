@@ -254,41 +254,27 @@ BOOL isPad() {
         [animationTimer invalidate];
         
       
-            [startStopButton setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
+        [startStopButton setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
          [startStopButton2 setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
         
         
-        
-        //        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide];
         [self.tabBarController.tabBar setHidden:NO];
-//        [self.navigationController setNavigationBarHidden:NO animated:YES];
         //clear sublayers
         
-        for (CALayer* layer in arOverlayView.layer.sublayers)
-        {
-            [layer removeFromSuperlayer];
-        }
-        [arOverlayView setImage:nil];
+//        for (CALayer* layer in arOverlayView.layer.sublayers)
+//        {
+//            [layer removeFromSuperlayer];
+//        }
         
     }else{
         running = YES;
-        //        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationSlide];
-//        [self.navigationController setNavigationBarHidden:YES animated:YES];
+
         [self.tabBarController.tabBar setHidden:YES]; 
         
         
         [startStopButton setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
          [startStopButton2 setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
         
-        [ UIView animateWithDuration:0.8 animations:^{
-            
-//            modeButton.center = CGPointMake(modeButton.center.x, modeButton.center.y+50);
-//            screenshotButton.center = CGPointMake(screenshotButton.center.x, screenshotButton.center.y+50);
-//            cameraModeButton.center = CGPointMake(cameraModeButton.center.x, cameraModeButton.center.y+50);
-//            startStopButton.center = CGPointMake(startStopButton.center.x, startStopButton.center.y+50);
-//            //           arOverlayView.alpha = 0;
-            
-        } ];
         
         [self activateCameraFeed];
         
