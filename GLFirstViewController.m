@@ -402,73 +402,9 @@ BOOL isPad() {
 }
 
 
-- (IBAction)enableDisableOverlayInteraction:(id)sender {
-    
- 
-    
-    UIView* temp = nil;
-    CGRect overlayFrame = self.scrollView.frame;
-    CGRect webviewFrame = self.webView.frame;
-    
-    scrollView.userInteractionEnabled = !scrollView.userInteractionEnabled;
-    
-    //scroll view is on top
-    if(scrollView.userInteractionEnabled)
-    {
-        temp = scrollView;
-        [scrollView removeFromSuperview];
-        [self.view insertSubview:temp aboveSubview:self.webView];
-        temp.frame = overlayFrame;
-        alphaView = containerView;
-        
-       [ UIView animateWithDuration:0.8 animations:^{
-           
-               [modeButton setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
-               [modeButton2 setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
-           
-           toolPanel.alpha = 0;
-           backButton.alpha = 0;
-           forwardButton.alpha = 0;
-           facebookButton.alpha = 0;
-           helpButton.alpha = 0;
-           preferencesButton.alpha = 0;
-//           arOverlayView.alpha = 0;
-           
-        } ];
-        
-       
-        
-        
-    }else{
-        //scroll view is below
-        temp = webView;
-        [webView removeFromSuperview];
-        [self.view insertSubview:temp aboveSubview:self.scrollView];
-        temp.frame = webviewFrame;
-        alphaView = temp;    
-        
-       
-        
-        [ UIView animateWithDuration:0.8 animations:^{
-            
-                [modeButton setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
-                [modeButton2 setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
-            
-            toolPanel.alpha = 1;
-            backButton.alpha = 1;
-            forwardButton.alpha = 1;
-            facebookButton.alpha = 1;
-            helpButton.alpha = 1;
-            preferencesButton.alpha = 1;
-//            arOverlayView.alpha = transparencySlider.value;
-            
-            
-        } ];
-        
-        
-    }
-    
-}
+
+#pragma mark - BUTTONS
+
 
 - (IBAction)switchCameraMode:(id)sender {
     
@@ -481,27 +417,91 @@ BOOL isPad() {
         [self swapCameras];
         
     }
-//    if([sender isKindOfClass:[UIButton class]])
-//    {
-//        UIButton* button = sender;
-//        
-//        if(useFrontCamera)
-//        {
-//        [button setImage:[ UIImage imageNamed:@"monitor"] forState:UIControlStateNormal];
-//        }else{
-//            [button setImage:[ UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
-//
-//        }
-//    }
     
-//    if(running)
-//    {
-//        [self buttonAction:nil];
-//        [self buttonAction:nil];
-//    }
-//    
     
 }
+
+- (IBAction)enableDisableOverlayInteraction:(id)sender {
+    
+
+    UIView* temp = nil;
+    CGRect overlayFrame = self.scrollView.frame;
+    CGRect webviewFrame = self.webView.frame;
+    
+    scrollView.userInteractionEnabled = !scrollView.userInteractionEnabled;
+    
+    //scroll view is on top
+    if(scrollView.userInteractionEnabled)
+    {
+        [self showCamera];
+        
+    }else{
+        [self showWeb];
+    }
+    
+}
+
+-(void)showCamera
+{
+    
+    UIView* temp = nil;
+    CGRect overlayFrame = self.scrollView.frame;
+    CGRect webviewFrame = self.webView.frame;
+    
+    temp = scrollView;
+    [scrollView removeFromSuperview];
+    [self.view insertSubview:temp aboveSubview:self.webView];
+    temp.frame = overlayFrame;
+    alphaView = containerView;
+    
+    [ UIView animateWithDuration:0.8 animations:^{
+        
+        [modeButton setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
+        [modeButton2 setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
+        
+        toolPanel.alpha = 0;
+        backButton.alpha = 0;
+        forwardButton.alpha = 0;
+        facebookButton.alpha = 0;
+        helpButton.alpha = 0;
+        preferencesButton.alpha = 0;
+        
+    } ];
+}
+
+-(void)showWeb
+{
+    
+    UIView* temp = nil;
+    CGRect overlayFrame = self.scrollView.frame;
+    CGRect webviewFrame = self.webView.frame;
+    
+    //scroll view is below
+    temp = webView;
+    [webView removeFromSuperview];
+    [self.view insertSubview:temp aboveSubview:self.scrollView];
+    temp.frame = webviewFrame;
+    alphaView = temp;
+    
+    
+    
+    [ UIView animateWithDuration:0.8 animations:^{
+        
+        [modeButton setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
+        [modeButton2 setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
+        
+        toolPanel.alpha = 1;
+        backButton.alpha = 1;
+        forwardButton.alpha = 1;
+        facebookButton.alpha = 1;
+        helpButton.alpha = 1;
+        preferencesButton.alpha = 1;
+        
+    } ];
+    
+    
+}
+
 - (IBAction)hueChanged:(id)sender {
     
 
@@ -654,6 +654,8 @@ BOOL isPad() {
     
     [webView goBack];
 }
+
+#pragma mark - SAVE IMAGE
 
 //image saved callback
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error 
@@ -877,6 +879,7 @@ BOOL isPad() {
     [captureSession startRunning];
 }
 
+#pragma mark - SCAN FOR CAMERAS
 - (void) scanForCameraDevices
 {
     cameraCount = 0;
@@ -930,6 +933,9 @@ BOOL isPad() {
     
     
     [self buttonAction:self.startStopButton];
+    [self showCamera];`
+//    [self enableDisableOverlayInteraction:self.modeButton];
+    
     
 }
 - (void) activateCameraFeed
