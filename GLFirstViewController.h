@@ -96,8 +96,14 @@ enum    {
 
 
 -(void)hideButtons:(BOOL) hide;
+@property (strong, nonatomic) IBOutlet UIView *webControls;
+@property (strong, nonatomic) IBOutlet UIView *cameraControls;
+@property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *webModeLabels;
 
+@property (strong, nonatomic) IBOutlet UIView *transparencyContainer;
+@property (strong, nonatomic) IBOutletCollection(UIView) NSArray *controls;
 
+@property (strong, nonatomic) IBOutlet UIImageView *backgroundView;
 @property (strong) AVCaptureStillImageOutput *stillImageOutput;
 @property (nonatomic, strong) UIImage *stillImage;
 
@@ -133,6 +139,7 @@ enum    {
 
 - (UIImage *) imageFromSampleBuffer:(CMSampleBufferRef) sampleBuffer ;
 
+- (IBAction)modeChanged:(id)sender;
 @property (weak, nonatomic) IBOutlet UIView *toolPanel;
 
 @property (weak, nonatomic) IBOutlet UIButton *modeButton;
@@ -170,6 +177,7 @@ enum    {
 @property (weak, nonatomic) IBOutlet UIButton *screenshotButton2;
 @property (weak, nonatomic) IBOutlet UIButton *arScreenshotButton2;
 
+@property (strong, nonatomic) UITapGestureRecognizer *tapToStopGesture;
 
 //collection to hide and show labels
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *buttonLabels;

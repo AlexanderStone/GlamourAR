@@ -41,8 +41,7 @@
     
     dismissKeyboardButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissKeyboard)];
     
-    UIBarButtonItem* dismissControllerButton = [[UIBarButtonItem alloc] initWithTitle:@"Dismiss" style:UIBarButtonItemStyleBordered target:self action:@selector(dismissController)];
-    self.navigationItem.leftBarButtonItem = dismissControllerButton;
+
     
     [self.scrollView setContentSize:CGSizeMake(320, 500)];
     
@@ -141,10 +140,7 @@
     self.navigationItem.rightBarButtonItem = nil;
 }
 
--(void)dismissController
-{
-    [self.parentViewController dismissModalViewControllerAnimated:YES];
-}
+
 
 
 
@@ -164,6 +160,12 @@
     searchEngineField.text = @"https://www.yahoo.com" ;
 }
 
+- (IBAction)dismissController:(id)sender {
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        
+    }];
+}
+
 - (IBAction)saveToCameraRollPrefChanged:(id)sender {
     [[NSUserDefaults standardUserDefaults] setBool:cameraRollSwitch.on forKey:@"saveToCamera"];
 }
@@ -174,31 +176,5 @@
 
 }
 
-//160,317
-- (void)bannerViewDidLoadAd:(ADBannerView *)banner
-{
-    if (!bannerIsVisible)
-    {
-        [UIView beginAnimations:@"animateAdBannerOn" context:NULL];
-        // banner is invisible now and moved out of the screen on 50 px
-        banner.alpha = 1;
-//        banner.center = CGPointMake(160,25);
-        [UIView commitAnimations];
-        bannerIsVisible = YES;
-    }
-}
-
-- (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error
-{
-    if (bannerIsVisible)
-    {
-        [UIView beginAnimations:@"animateAdBannerOff" context:NULL];
-        // banner is visible and we move it out of the screen, due to connection issue
-        banner.alpha = 0;
-//        banner.center = CGPointMake(160,-150);
-        [UIView commitAnimations];
-        bannerIsVisible = NO;
-    }
-}
 
 @end

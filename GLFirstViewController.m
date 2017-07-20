@@ -72,9 +72,28 @@ BOOL isPad() {
     
 //    NSURL* url =  [NSURL URLWithString:@"http://www.youtube.com/watch?v=U7dOBeyr5bk"];
     
+
+    
+    self.tapToStopGesture = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(buttonAction:)];
+    self.tapToStopGesture.numberOfTapsRequired = 1;
+    [self.scrollView addGestureRecognizer: self.tapToStopGesture];
+    
+
+    
     useFrontCamera = YES;
     
+    for (UIView* v in self.controls) {
+        [self styleView:v];
+    }
     
+    self.transparencyContainer.layer.borderWidth = 1;
+    self.transparencyContainer.layer.borderColor = [UIColor colorWithWhite:0.8 alpha:0.33].CGColor;
+    self.transparencyContainer.layer.masksToBounds = YES;
+    self.transparencyContainer.layer.cornerRadius = 4;
+    self.transparencyContainer.backgroundColor = UIColor.clearColor;
+    
+    
+    [self.transparencyContainer sendSubviewToBack:self.backgroundView];
     
 //    self.scrollView.contentSize = CGSizeMake( arOverlayView.frame.size.width*3, arOverlayView.frame.size.height*3);
     self.scrollView.contentSize = CGSizeMake( 4096,4096);
@@ -99,7 +118,13 @@ BOOL isPad() {
          [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"sendEmail"];
     }
     
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]];
+    https://static.pexels.com/photos/355164/pexels-photo-355164.jpeg
+    
+//    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]];
+    
+    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
+//    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://static.pexels.com/photos/355164/pexels-photo-355164.jpeg"]]];
+    
     
      [arOverlayView setTransform:CGAffineTransformScale([arOverlayView transform], (CGFloat)0.667, (CGFloat)0.667)];
     
@@ -117,44 +142,11 @@ BOOL isPad() {
     
     
     currentViewSource = VIEWSOURCE_UIIMAGEVIEW ;
+    UIImage* instructions = [UIImage imageNamed:@"augmented-reality-help"];
+    [arOverlayView setImage:instructions];
     
 }
 
-- (void)viewDidUnload
-{
-    [self setWebView:nil];
-    [self setTransparencySlider:nil];
-    [self setArOverlayView:nil];
-    [self setPinchGestureRecognizer:nil];
-    [self setScrollView:nil];
-    [self setContainerView:nil];
-    [self setHueSlider:nil];
-    [self setBackButton:nil];
-    [self setForwardButton:nil];
-    [self setModeButton:nil];
-    [self setScreenshotButton:nil];
-    [self setCameraModeButton:nil];
-    [self setStartStopButton:nil];
-    [self setTimerArrow:nil];
-    [self setSaveCompositeButton:nil];
-    [self setHelpButton:nil];
-    [self setFacebookButton:nil];
-    [self setPreferencesButton:nil];
-    [self setTransparencyLabel:nil];
-    [self setHueLabel:nil];
-    [self setActivityIndicator:nil];
-    [self setRotationRecognizer:nil];
-    [self setToolPanel:nil];
-    [self setModeButton2:nil];
-    [self setCameraModeButton2:nil];
-    [self setStartStopButton2:nil];
-    [self setScreenshotButton2:nil];
-    [self setArScreenshotButton2:nil];
-    [self setButtonLabels:nil];
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -435,8 +427,13 @@ BOOL isPad() {
     {
         [self showCamera];
         
+
+        
+
+        
     }else{
         [self showWeb];
+        
     }
     
 }
@@ -454,19 +451,12 @@ BOOL isPad() {
     temp.frame = overlayFrame;
     alphaView = containerView;
     
-    [ UIView animateWithDuration:0.8 animations:^{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.webControls.alpha = 0;
+        self.cameraControls.alpha = 1;
         
-        [modeButton setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
-        [modeButton2 setImage:[UIImage imageNamed:@"world"] forState:UIControlStateNormal];
-        
-        toolPanel.alpha = 0;
-        backButton.alpha = 0;
-        forwardButton.alpha = 0;
-        facebookButton.alpha = 0;
-        helpButton.alpha = 0;
-        preferencesButton.alpha = 0;
-        
-    } ];
+    }];
+    
 }
 
 -(void)showWeb
@@ -482,23 +472,12 @@ BOOL isPad() {
     [self.view insertSubview:temp aboveSubview:self.scrollView];
     temp.frame = webviewFrame;
     alphaView = temp;
-    
-    
-    
-    [ UIView animateWithDuration:0.8 animations:^{
+
+    [UIView animateWithDuration:0.3 animations:^{
+        self.webControls.alpha = 1;
+        self.cameraControls.alpha = 0;
         
-        [modeButton setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
-        [modeButton2 setImage:[UIImage imageNamed:@"camera"] forState:UIControlStateNormal];
-        
-        toolPanel.alpha = 1;
-        backButton.alpha = 1;
-        forwardButton.alpha = 1;
-        facebookButton.alpha = 1;
-        helpButton.alpha = 1;
-        preferencesButton.alpha = 1;
-        
-    } ];
-    
+    }];
     
 }
 
@@ -723,6 +702,9 @@ BOOL isPad() {
     return (image);
 }
 
+- (IBAction)modeChanged:(id)sender {
+}
+
 //// Delegate routine that is called when a sample buffer was written
 //- (void)captureOutput:(AVCaptureOutput *)captureOutput 
 //didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer 
@@ -779,15 +761,16 @@ BOOL isPad() {
 
 - (void) swapCameras
 {
+    [captureSession stopRunning];
     [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.75];
+    [UIView setAnimationDuration:0.6];
     [UIView setAnimationCurve:UIViewAnimationCurveLinear];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(cameraSwapAnimation:finished:context:)];
-    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:[self view] cache:YES];
+    [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromRight forView:self.arOverlayView cache:YES];
     [UIView commitAnimations];
     
-    [captureSession stopRunning];
+   
     [captureSession beginConfiguration];
     [captureSession removeInput:captureInput];
     
@@ -933,7 +916,7 @@ BOOL isPad() {
     
     
     [self buttonAction:self.startStopButton];
-    [self showCamera];`
+    [self showCamera];
 //    [self enableDisableOverlayInteraction:self.modeButton];
     
     
@@ -1238,19 +1221,14 @@ BOOL isPad() {
 
 - (IBAction)searchButton:(id)sender {
     [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"searchEngine"]]]];
-    
 }
 
 - (IBAction)helpButtonAction:(id)sender {
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]]];
-    
-    
+    [[UIApplication sharedApplication] openURL:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]]];
 }
 
 - (IBAction)facebookButtonAction:(id)sender {
-    
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]]];
-
+    [[UIApplication sharedApplication] openURL:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]]];
 }
 
 - (IBAction)preferencesButtonAction:(id)sender {
@@ -1439,6 +1417,17 @@ BOOL isPad() {
     }
     
     
+}
+
+-(void)styleView:(UIView*)view
+{
+    view.layer.borderWidth = 2;
+//    view.layer.borderColor = [UIColor colorWithWhite:0.5 alpha:0.66].CGColor;
+    view.layer.borderColor = [UIColor colorWithRed:0.0 green:122.0/255.0 blue:255.0/255.0 alpha:1.0].CGColor;
+    view.layer.masksToBounds = YES;
+//    view.layer.cornerRadius = view.bounds.size.width/2.0;
+    view.layer.cornerRadius = 11;
+    view.backgroundColor = UIColor.clearColor;
 }
 
 @end

@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <iAd/iAd.h>;
 
-@interface PreferencesViewController : UIViewController<UITextFieldDelegate, ADBannerViewDelegate>
+
+@interface PreferencesViewController : UIViewController<UITextFieldDelegate>
 {
     bool bannerIsVisible;
 }
@@ -47,6 +47,7 @@
 - (IBAction)yahooButton:(id)sender;
 
 
+- (IBAction)dismissController:(id)sender;
 
 
 
