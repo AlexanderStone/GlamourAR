@@ -1267,11 +1267,11 @@ BOOL isPad() {
 }
 
 - (IBAction)helpButtonAction:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]];
 }
 
 - (IBAction)facebookButtonAction:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Augmented-Reality-Glamour/160885867357601"]];
 }
 
 - (IBAction)preferencesButtonAction:(id)sender {
