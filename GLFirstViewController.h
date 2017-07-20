@@ -178,8 +178,12 @@ enum    {
 @property (weak, nonatomic) IBOutlet UIButton *arScreenshotButton2;
 
 @property (strong, nonatomic) UITapGestureRecognizer *tapToStopGesture;
-
+@property (strong, nonatomic) UITapGestureRecognizer *tapToTakePhotoGesture;
 //collection to hide and show labels
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *buttonLabels;
+@property (strong, nonatomic) IBOutlet UIButton *dragButton;
+- (IBAction)draggedOut:(id)sender;
+- (IBAction)restoreTransform:(id)sender;
 
+@property ( nonatomic, readonly)  BOOL isRunning;
 @end

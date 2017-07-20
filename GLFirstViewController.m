@@ -14,6 +14,8 @@
 #import "ScreenCapture.h"
 #import <ImageIO/ImageIO.h>
 #import "Appirater.h"
+#import "ASJOverflowMenu.h"
+#import "ASJOverflowButton.h"
 
 BOOL isPad() {
 #ifdef UI_USER_INTERFACE_IDIOM
@@ -22,6 +24,22 @@ BOOL isPad() {
     return NO;
 #endif
 }
+
+@interface GLFirstViewController () <UIScrollViewDelegate>
+
+@property (strong, nonatomic) ASJOverflowButton *overflowButton;
+@property (copy, nonatomic) NSArray *overflowItems;
+
+@property (nonatomic) CGPoint originalContentOffset;
+
+- (void)setup;
+- (void)setupDefaults;
+- (void)setupOverflowItems;
+- (void)setupOverflowButton;
+- (void)handleOverflowBlocks;
+
+@end
+
 
 @implementation GLFirstViewController
 @synthesize buttonLabels;
@@ -65,6 +83,21 @@ BOOL isPad() {
 
 #pragma mark - View lifecycle
 
+-(void) loadDefaultContent
+{
+//    https://www.pexels.com/photo/adult-beautiful-beauty-blue-eyes-356225/
+    
+//    https://static.pexels.com/photos/37533/studio-portrait-woman-face-37533.jpeg
+     [self.webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
+    
+//    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]]
+    
+    //    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]];
+    
+    //  [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
+    //    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://static.pexels.com/photos/355164/pexels-photo-355164.jpeg"]]];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -72,11 +105,17 @@ BOOL isPad() {
     
 //    NSURL* url =  [NSURL URLWithString:@"http://www.youtube.com/watch?v=U7dOBeyr5bk"];
     
-
+    [self setup];
     
     self.tapToStopGesture = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(buttonAction:)];
     self.tapToStopGesture.numberOfTapsRequired = 1;
     [self.scrollView addGestureRecognizer: self.tapToStopGesture];
+    
+
+    self.tapToTakePhotoGesture = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(saveComposite:)];
+    self.tapToTakePhotoGesture.numberOfTapsRequired = 1;
+    self.tapToTakePhotoGesture.numberOfTouchesRequired = 2;
+    [self.scrollView addGestureRecognizer: self.tapToTakePhotoGesture];
     
 
     
@@ -102,14 +141,11 @@ BOOL isPad() {
     self.scrollView.minimumZoomScale = 0.25;
     
     self.scrollView.contentOffset = arOverlayView.frame.origin;
-    
+    self.originalContentOffset = arOverlayView.frame.origin;
     NSString* searchEnginePref = nil;
     searchEnginePref = [[NSUserDefaults standardUserDefaults] stringForKey:@"searchEngine"];
     
     if(searchEnginePref ==nil ||searchEnginePref.length ==0){
-        
-        
-        
         
         searchEnginePref = (!isPad())?@"https://www.google.com":@"https://www.bing.com";
         [[NSUserDefaults standardUserDefaults] setValue:searchEnginePref forKey:@"searchEngine"];
@@ -118,13 +154,7 @@ BOOL isPad() {
          [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"sendEmail"];
     }
     
-    https://static.pexels.com/photos/355164/pexels-photo-355164.jpeg
-    
-//    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]];
-    
-    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
-//    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://static.pexels.com/photos/355164/pexels-photo-355164.jpeg"]]];
-    
+    [self loadDefaultContent];
     
      [arOverlayView setTransform:CGAffineTransformScale([arOverlayView transform], (CGFloat)0.667, (CGFloat)0.667)];
     
@@ -142,8 +172,16 @@ BOOL isPad() {
     
     
     currentViewSource = VIEWSOURCE_UIIMAGEVIEW ;
-    UIImage* instructions = [UIImage imageNamed:@"augmented-reality-help"];
-    [arOverlayView setImage:instructions];
+    
+    
+    
+    UIPanGestureRecognizer *panRecognizer;
+    panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                            action:@selector(wasDragged:)];
+    // cancel touches so that touchUpInside touches are ignored
+    panRecognizer.cancelsTouchesInView = YES;
+    [self.dragButton addGestureRecognizer:panRecognizer];
+
     
 }
 
@@ -369,6 +407,7 @@ BOOL isPad() {
 //}
 
 - (IBAction)handlePinch:(id)sender {
+    NSLog(@"Handle Pinch");
 }
 
 
@@ -377,7 +416,6 @@ BOOL isPad() {
     return self.containerView;
 }
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView{
-    
     
    
 //    if(scrollView.zoomScale<1.0)
@@ -391,6 +429,11 @@ BOOL isPad() {
 //        self.tableView.frame = CGRectMake(f.origin.x, f.origin.y, f.size.width, 350);
 //    }
 //    
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+//    NSLog(@"Offset: %.0f %.0f",scrollView.contentOffset.x, scrollView.contentOffset.y);
 }
 
 
@@ -1359,12 +1402,9 @@ BOOL isPad() {
     if([sender isKindOfClass:[UIRotationGestureRecognizer class]])
     {
         UIRotationGestureRecognizer* recognizer = sender;
-        
-        //        	CGPoint location = [recognizer locationInView:self.view];
-        
+    
         float recognizerRotation = [recognizer rotation];
-        
-        //turn all rotation into positive one to prevent date formatting issues
+
         float rotation = (savedRotation+recognizerRotation);
         
         
@@ -1383,15 +1423,6 @@ BOOL isPad() {
         
         [[NSUserDefaults standardUserDefaults] setFloat: rotation forKey:@"outerDialRotation"];
         
-     
-        
-        //        	[self showImageWithText:@"rotation" atPoint:location];
-        
-        //        	[UIView beginAnimations:nil context:NULL];
-        //        	[UIView setAnimationDuration:0.65];
-        ////        	imageView.alpha = 0.0;
-        //            backgroundReminderView.transform = CGAffineTransformIdentity;
-        //        	[UIView commitAnimations];
         
     }
     
@@ -1399,23 +1430,7 @@ BOOL isPad() {
 
 
 -(void)hideButtons:(BOOL) hide{
-    cameraModeButton.alpha = (hide)?0:1;
-    modeButton.alpha = (hide)?0:1;
-    startStopButton.alpha = (hide)?0:1;
-    screenshotButton.alpha = (hide)?0:1;
-    saveCompositeButton.alpha = (hide)?0:1;
-    
-    cameraModeButton2.alpha = (hide)?0:1;
-    modeButton2.alpha = (hide)?0:1;
-    startStopButton2.alpha = (hide)?0:1;
-    screenshotButton2.alpha = (hide)?0:1;
-    arScreenshotButton2.alpha = (hide)?0:1;
-    
-    for (UILabel* label in buttonLabels)
-    {
-        label.alpha = (hide)?0:1;
-    }
-    
+    self.transparencyContainer.alpha = (hide)?0:1;    
     
 }
 
@@ -1430,4 +1445,230 @@ BOOL isPad() {
     view.backgroundColor = UIColor.clearColor;
 }
 
+-(BOOL)isRunning{
+    return running;
+}
+
+#pragma mark - OVERFLOW BUTTON
+
+- (void)setup
+{
+
+    [self setupOverflowItems];
+    [self setupOverflowButton];
+    [self handleOverflowBlocks];
+}
+
+
+- (void)setupOverflowItems
+{
+    NSMutableArray *temp = [[NSMutableArray alloc] init];
+    
+    
+    
+    ASJOverflowItem *item = [ASJOverflowItem itemWithName:@"Instructions"
+                                                    image:nil
+                                          backgroundColor:nil];
+    [temp addObject:item];
+    
+   item = [ASJOverflowItem itemWithName:@"Web Help"
+                                                    image:[UIImage imageNamed:@"help"]
+                                          backgroundColor:nil];
+    [temp addObject:item];
+    
+    
+    
+    item = [ASJOverflowItem itemWithName:@"Drag to position"
+                                                    image:[UIImage imageNamed:@"1105-finger-drag-toolbar"]
+                                          backgroundColor:nil];
+    [temp addObject:item];
+    
+    
+    
+    
+    item = [ASJOverflowItem itemWithName:@"Pinch to zoom"
+                                   image:[UIImage imageNamed:@"1109-pinch-toolbar"]
+                         backgroundColor:nil];
+    [temp addObject:item];
+    
+    
+    item = [ASJOverflowItem itemWithName:@"Rotate camera"
+                                   image:[UIImage imageNamed:@"1110-rotate-toolbar"]
+                         backgroundColor:nil];
+    [temp addObject:item];
+    
+    
+    item = [ASJOverflowItem itemWithName:@"1 Finger Freeze"
+                                                    image:[UIImage imageNamed:@"1102-one-finger-tap-toolbar"]
+                                          backgroundColor:nil];
+    [temp addObject:item];
+    
+    item = [ASJOverflowItem itemWithName:@"2 Finger Save"
+                                   image:[UIImage imageNamed:@"1103-two-finger-tap-toolbar"]
+                         backgroundColor:nil];
+    [temp addObject:item];
+    
+    item = [ASJOverflowItem itemWithName:@"Flick to locate"
+                                   image:[UIImage imageNamed:@"1111-flick-left-toolbar"]
+                         backgroundColor:nil];
+    
+    item = [ASJOverflowItem itemWithName:@"Drag Free Transform"
+                                   image:[UIImage imageNamed:@"1107-vertical-swipe-toolbar"]
+                         backgroundColor:nil];
+    [temp addObject:item];
+
+
+    
+    _overflowItems = [NSArray arrayWithArray:temp];
+}
+
+- (void)setupOverflowButton
+{
+    UIImage *image = [UIImage imageNamed:@"1102-one-finger-tap-toolbar"];
+    
+    _overflowButton = [[ASJOverflowButton alloc] initWithImage:image items:_overflowItems];
+    _overflowButton.dimsBackground = YES;
+    _overflowButton.hidesSeparator = NO;
+    _overflowButton.hidesShadow = NO;
+    _overflowButton.dimmingLevel = 0.3f;
+    _overflowButton.menuItemHeight = 50.0f;
+    _overflowButton.widthMultiplier = 0.5f;
+    _overflowButton.itemTextColor = [UIColor blackColor];
+    _overflowButton.menuBackgroundColor = [UIColor whiteColor];
+    _overflowButton.itemHighlightedColor = [UIColor colorWithWhite:0.0f alpha:0.1f];
+    _overflowButton.menuMargins = MenuMarginsMake(7.0f, 7.0f, 7.0f);
+    _overflowButton.separatorInsets = SeparatorInsetsMake(10.0f, 5.0f);
+    _overflowButton.menuAnimationType = MenuAnimationTypeZoomIn;
+    _overflowButton.itemFont = [UIFont fontWithName:@"Verdana" size:13.0f];
+    
+    self.navigationItem.rightBarButtonItem = _overflowButton;
+}
+
+- (void)handleOverflowBlocks
+{
+    __weak typeof(self) weakSelf = self;
+    [_overflowButton setItemTapBlock:^(ASJOverflowItem *item, NSInteger idx)
+     {
+         
+         NSString* title = @"";
+         NSString* message = @"";
+         
+         
+         switch (idx) {
+                 
+             case 0:
+                //show help
+             {
+                     dispatch_async(dispatch_get_main_queue(), ^{
+                         
+                         if(weakSelf.isRunning)
+                         {
+                             [weakSelf buttonAction:nil];
+                         }
+                         
+                         weakSelf.transparencySlider.value = 1.0;
+                         [weakSelf transparencyChanged:weakSelf.transparencySlider];
+                         
+                         UIImage* instructions = [UIImage imageNamed:@"augmented-reality-help"];
+                         [weakSelf.arOverlayView setImage:instructions];
+                     });
+                    return;
+                 
+                 return;
+                 break;
+                 
+             }
+             case 1:
+             {
+                 
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [weakSelf helpButtonAction:nil];
+                     
+                 });
+                 return;
+                 
+                 return;
+                 
+             }
+                 
+                 
+             case 2:
+                 title = @"Position Image";
+                 message = @"While in camera mode - drag camera feed around to position it and alight with web image";
+                 break;
+             case 3:
+                 title = @"Resize Image";
+                 message = @"Resize camera or web content with two finger pinch gesture";
+                 break;
+             case 4:
+                 title = @"Rotate Image";
+                 message = @"Adjust image rotation with two finger clockwise movement";
+                 break;
+                 
+             case 5:
+                 title = @"Freeze camera";
+                 message = @"Tap screen with one finger to freeze camera";
+                 break;
+                 
+             case 6:
+                 title = @"Take photo";
+                 message = @"Tap screen with two fingers to save photo to camera roll";
+                 break;
+                 
+             case 7:
+                 title = @"Free transform";
+                 message = @"Start dragging from free transform button to change camera proportions or reflect it horizontally";
+                 break;
+
+                 
+             default:
+                 break;
+         }
+         
+         
+         UIAlertController* alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+         
+         UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+             
+         }];
+         [alert addAction:cancel];
+         
+         [weakSelf presentViewController:alert animated:YES completion:^{
+             
+         }];
+         
+     }];
+    
+    [_overflowButton setHideMenuBlock:^{
+        NSLog(@"hidden");
+    }];
+
+}
+
+- (IBAction)draggedOut:(id)sender {
+    
+}
+
+- (IBAction)restoreTransform:(id)sender {
+    self.arOverlayView.transform = CGAffineTransformIdentity;
+}
+
+- (void)wasDragged:(UIPanGestureRecognizer *)recognizer {
+    UIButton *button = (UIButton *)recognizer.view;
+    CGPoint translation = [recognizer translationInView:button];
+    
+//    button.center = CGPointMake(button.center.x + translation.x, button.center.y + translation.y);
+//    [recognizer setTranslation:CGPointZero inView:button];
+//   self.arOverlayView.transform = CGAffineTransformScale(self.arOverlayView.transform, 1.0 + (translation.x / button.bounds.size.width),
+//                           1.0 + (translation.y / button.bounds.size.height));
+//    self.arOverlayView.layer.anchorPoint = CGPointMake(0, 0);
+    
+    self.arOverlayView.transform = CGAffineTransformMakeScale(1.0 + (translation.x / button.bounds.size.width),
+                                                              1.0 + (translation.y / button.bounds.size.height));
+    NSLog(@"Translation: %.0f %.0f",translation.x, translation.y);
+}
+
+- (IBAction)buttonWasTapped:(id)sender {
+    NSLog(@"%s - button tapped",__FUNCTION__);
+}
 @end

@@ -38,6 +38,15 @@
                                                 <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <gestureRecognizers/>
                                             </view>
+                                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="7QX-uq-Ynw" userLabel="Drag Button">
+                                                <rect key="frame" x="1414" y="2049" width="60" height="60"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                <color key="backgroundColor" red="1" green="0.0" blue="0.76617476849999999" alpha="0.42999999999999999" colorSpace="calibratedRGB"/>
+                                                <state key="normal" image="1107-vertical-swipe-toolbar"/>
+                                                <connections>
+                                                    <action selector="restoreTransform:" destination="2" eventType="touchUpInside" id="jyv-Vj-atO"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
@@ -308,7 +317,7 @@
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Augmented Reality" image="photos.png" id="7"/>
-                    <navigationItem key="navigationItem" id="szj-Wr-m3u"/>
+                    <navigationItem key="navigationItem" title="Glamour Camera" id="szj-Wr-m3u"/>
                     <connections>
                         <outlet property="activityIndicator" destination="gAU-hw-jrJ" id="8cI-V8-jsT"/>
                         <outlet property="arOverlayView" destination="Hs8-GI-5Uz" id="MKO-Ns-kbW"/>
@@ -317,6 +326,7 @@
                         <outlet property="cameraControls" destination="829-ic-bDv" id="oyf-aA-dlO"/>
                         <outlet property="cameraModeButton" destination="E6M-SR-gm3" id="Ni5-KX-GS3"/>
                         <outlet property="containerView" destination="fgj-c6-fd4" id="42F-af-Q6k"/>
+                        <outlet property="dragButton" destination="7QX-uq-Ynw" id="cY5-tS-9fa"/>
                         <outlet property="facebookButton" destination="cyw-86-154" id="53Z-6p-MrY"/>
                         <outlet property="forwardButton" destination="Qj5-XL-k8Z" id="wfH-19-5W3"/>
                         <outlet property="helpButton" destination="PGC-Us-RWI" id="chR-hJ-kFO"/>
@@ -348,6 +358,7 @@
                         <outletCollection property="webModeLabels" destination="Lj7-zt-wIP" id="Os7-2e-d9f"/>
                         <outletCollection property="webModeLabels" destination="JZK-xI-6Zu" id="2Aw-B2-hw5"/>
                         <outletCollection property="webModeLabels" destination="KsY-q4-kMl" id="xC0-Hm-oxk"/>
+                        <outletCollection property="controls" destination="7QX-uq-Ynw" id="Mp1-7g-poR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="10" sceneMemberID="firstResponder"/>
@@ -530,7 +541,7 @@
         <!--Navigation Controller-->
         <scene sceneID="0SA-b5-GXw">
             <objects>
-                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="Vac-cs-iSt" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" id="Vac-cs-iSt" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="uUt-4U-D3E">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -545,6 +556,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="1107-vertical-swipe-toolbar" width="22" height="22"/>
         <image name="1236-group-plus-toolbar.png" width="66" height="66"/>
         <image name="1237-group-minus-toolbar.png" width="66" height="66"/>
         <image name="arrowleft.png" width="26" height="26"/>
