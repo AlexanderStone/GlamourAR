@@ -165,6 +165,7 @@ enum    {
 @property (weak, nonatomic) IBOutlet UILabel *hueLabel;
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UILabel *playPauseLabel;
 
 @property (strong, nonatomic) IBOutlet UIRotationGestureRecognizer *rotationRecognizer;
 - (IBAction)rotateView:(id)sender;
@@ -182,8 +183,10 @@ enum    {
 //collection to hide and show labels
 @property (strong, nonatomic) IBOutletCollection(UILabel) NSArray *buttonLabels;
 @property (strong, nonatomic) IBOutlet UIButton *dragButton;
+@property (strong, nonatomic) IBOutlet UISegmentedControl *segmentedControl;
 - (IBAction)draggedOut:(id)sender;
 - (IBAction)restoreTransform:(id)sender;
 
+- (IBAction)showImageSelector:(id)sender;
 @property ( nonatomic, readonly)  BOOL isRunning;
 @end

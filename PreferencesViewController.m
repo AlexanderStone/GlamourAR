@@ -49,7 +49,7 @@
     searchEnginePref = [[NSUserDefaults standardUserDefaults] stringForKey:@"searchEngine"];
     
     if(searchEnginePref ==nil ||searchEnginePref.length ==0){
-        searchEnginePref = @"https://www.google.com";
+        searchEnginePref = @"http://images.google.com/search?tbm=isch&q=Beautiful+people";
         [[NSUserDefaults standardUserDefaults] setValue:searchEnginePref forKey:@"searchEngine"];
     }
     

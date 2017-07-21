@@ -25,7 +25,7 @@ BOOL isPad() {
 #endif
 }
 
-@interface GLFirstViewController () <UIScrollViewDelegate>
+@interface GLFirstViewController () <UIScrollViewDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 
 @property (strong, nonatomic) ASJOverflowButton *overflowButton;
 @property (copy, nonatomic) NSArray *overflowItems;
@@ -87,8 +87,14 @@ BOOL isPad() {
 {
 //    https://www.pexels.com/photo/adult-beautiful-beauty-blue-eyes-356225/
     
+    
+    NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"home" ofType:@"html"];
+    NSString* htmlString = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
+    [self.webView loadHTMLString:htmlString baseURL: [[NSBundle mainBundle] bundleURL]];
+    
+    
 //    https://static.pexels.com/photos/37533/studio-portrait-woman-face-37533.jpeg
-     [self.webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
+//     [self.webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.christopherteh.com/blog/wp-content/uploads/2016/02/Fotolia_84395549_Subscription_Monthly_M-900x600.jpg"]]];
     
 //    [webView loadRequest: [NSURLRequest requestWithURL:[NSURL URLWithString:searchEnginePref]]]
     
@@ -106,6 +112,8 @@ BOOL isPad() {
 //    NSURL* url =  [NSURL URLWithString:@"http://www.youtube.com/watch?v=U7dOBeyr5bk"];
     
     [self setup];
+    
+    [self copyCameraPage];
     
     self.tapToStopGesture = [[UITapGestureRecognizer alloc] initWithTarget:self  action:@selector(buttonAction:)];
     self.tapToStopGesture.numberOfTapsRequired = 1;
@@ -147,7 +155,7 @@ BOOL isPad() {
     
     if(searchEnginePref ==nil ||searchEnginePref.length ==0){
         
-        searchEnginePref = (!isPad())?@"https://www.google.com":@"https://www.bing.com";
+        searchEnginePref = (!isPad())?@"http://images.google.com/search?tbm=isch&q=Beautiful+people":@"https://www.bing.com";
         [[NSUserDefaults standardUserDefaults] setValue:searchEnginePref forKey:@"searchEngine"];
         
          [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"saveToCamera"];
@@ -168,12 +176,11 @@ BOOL isPad() {
      hueLabel.text = [NSString stringWithFormat:@"%.2f",hueSlider.value];
 //    [webView loadHTMLString:@"http://www.google.com" baseURL:[NSURL URLWithString:@"http://www.youtube.com/watch?v=U7dOBeyr5bk"]];
     
-    [self scanForCameraDevices];
-    
+
+//    [self scanForCameraDevices];
+
     
     currentViewSource = VIEWSOURCE_UIIMAGEVIEW ;
-    
-    
     
     UIPanGestureRecognizer *panRecognizer;
     panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
@@ -287,7 +294,7 @@ BOOL isPad() {
         [startStopButton setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
          [startStopButton2 setImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
         
-        
+        self.playPauseLabel.text = @"Resume";
         [self.tabBarController.tabBar setHidden:NO];
         //clear sublayers
         
@@ -305,7 +312,7 @@ BOOL isPad() {
         [startStopButton setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
          [startStopButton2 setImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
         
-        
+        self.playPauseLabel.text = @"Freeze";
         [self activateCameraFeed];
         
     }
@@ -407,7 +414,7 @@ BOOL isPad() {
 //}
 
 - (IBAction)handlePinch:(id)sender {
-    NSLog(@"Handle Pinch");
+//    NSLog(@"Handle Pinch");
 }
 
 
@@ -584,7 +591,7 @@ BOOL isPad() {
 //    }];
 //    
        
-    NSLog(@"saveOverlay");
+//    NSLog(@"saveOverlay");
 //    GLAppDelegate* appDelegate =     [UIApplication sharedApplication].delegate;
  
   
@@ -605,8 +612,8 @@ BOOL isPad() {
 }
 
 - (IBAction)saveComposite:(id)sender {
-    NSLog(@"saveComposite");
-    [Appirater userDidSignificantEvent:YES];
+//    NSLog(@"saveComposite");
+//    [Appirater userDidSignificantEvent:YES];
     
 //    timerArrow.center = saveCompositeButton.center;
 //    timerArrow.alpha = 1;
@@ -669,12 +676,137 @@ BOOL isPad() {
 }
 
 - (IBAction)timerAction:(id)sender {
-    NSLog(@"timerAction");
+//    NSLog(@"timerAction");
 }
 
 - (IBAction)backArrowAction:(id)sender {
     
     [webView goBack];
+}
+
+- (IBAction)showImageSelector:(id)sender
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Select Image" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    __weak GLFirstViewController* weakSelf = self;
+    
+    UIAlertAction* cameraRoll = [UIAlertAction actionWithTitle:@"From Camera Roll" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = weakSelf;
+        picker.allowsEditing = NO;
+        picker.sourceType =  UIImagePickerControllerSourceTypePhotoLibrary;
+        
+        [weakSelf presentViewController:picker animated:YES completion:NULL];
+    }];
+    
+    UIAlertAction* takePhoto = [UIAlertAction actionWithTitle:@"Take Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = weakSelf;
+        picker.allowsEditing = NO;
+        picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        
+        [weakSelf presentViewController:picker animated:YES completion:NULL];
+    }];
+    
+    UIAlertAction* web = [UIAlertAction actionWithTitle:@"From Web" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        if(scrollView.userInteractionEnabled == YES)
+        {
+            [self enableDisableOverlayInteraction:nil];
+            weakSelf.segmentedControl.selectedSegmentIndex = 1;
+        }
+    
+        [weakSelf searchButton:nil];
+        
+    }];
+    
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    
+    [alert addAction:cameraRoll];
+    [alert addAction:takePhoto];
+    [alert addAction:web];
+    [alert addAction:cancel];
+    
+    [self presentViewController:alert animated:YES completion:^{
+        
+    }];
+    
+}
+
+-(NSString*) photoPath
+{
+    //obtaining saving path
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString* folderPath = [documentsDirectory stringByAppendingPathComponent:@"photos"];
+    
+    NSError* error = nil;
+   BOOL success = [[NSFileManager defaultManager]createDirectoryAtPath:folderPath withIntermediateDirectories:YES attributes:nil error: &error];
+    
+    if(error != nil || success == NO)
+    {
+        //error creating folder
+    }
+    
+    return folderPath;
+}
+
+-(void) copyCameraPage {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSError *error;
+    
+    NSString *filePath = [[self photoPath] stringByAppendingPathComponent:@"camera_content.html"];
+    
+    if ([fileManager fileExistsAtPath:filePath] == NO)
+    {
+        NSString *resourcePath = [[NSBundle mainBundle] pathForResource:@"camera_content" ofType:@"html"];
+        [fileManager copyItemAtPath:resourcePath toPath:filePath error:&error];
+        if (error) {
+//            NSLog(@"Error on copying file: %@\nfrom path: %@\ntoPath: %@", error, resourcePath, filePath);
+        }
+    }
+    
+    
+    
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    
+    __weak GLFirstViewController* weakSelf = self;
+    NSString *htmlFile = [[self photoPath] stringByAppendingPathComponent:@"camera_content.html"];
+    NSURL* url = [NSURL URLWithString:htmlFile];
+     [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
+    
+    UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
+    
+    NSString *imagePath = [[self photoPath] stringByAppendingPathComponent:@"camera_image.jpg"];
+    
+    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil];
+    
+    NSData *webData = UIImageJPEGRepresentation( chosenImage,90);
+    success = [webData writeToFile:imagePath atomically:YES];
+    
+
+    
+    
+   
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+//        [weakSelf.webView loadRequest:[NSURLRequest requestWithURL:url]];
+        [weakSelf.webView reload];
+    });
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    
 }
 
 #pragma mark - SAVE IMAGE
@@ -687,12 +819,12 @@ BOOL isPad() {
     if (error != NULL)
     {
         // Show error message...
-         NSLog(@"save failed");
+//         NSLog(@"save failed");
         
     }
     else  // No errors
     {
-         NSLog(@"save successful");
+//         NSLog(@"save successful");
         // Show message image successfully saved
     }
 }
@@ -776,14 +908,14 @@ BOOL isPad() {
         }
 	}
     
-	NSLog(@"about to request a capture from: %@", [self stillImageOutput]);
+//	NSLog(@"about to request a capture from: %@", [self stillImageOutput]);
 	[[self stillImageOutput] captureStillImageAsynchronouslyFromConnection:videoConnection
                                                          completionHandler:^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
                                                              CFDictionaryRef exifAttachments = CMGetAttachment(imageSampleBuffer, kCGImagePropertyExifDictionary, NULL);
                                                              if (exifAttachments) {
-                                                                 NSLog(@"attachements: %@", exifAttachments);
+//                                                                 NSLog(@"attachements: %@", exifAttachments);
                                                              } else {
-                                                                 NSLog(@"no attachments");
+//                                                                 NSLog(@"no attachments");
                                                              }
                                                              NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
                                                              UIImage *image = [[UIImage alloc] initWithData:imageData];
@@ -1267,7 +1399,7 @@ BOOL isPad() {
 }
 
 - (IBAction)helpButtonAction:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://luciddreamingapp.com/augmented-reality/augmented-reality-controls/"]];
 }
 
 - (IBAction)facebookButtonAction:(id)sender {
@@ -1442,7 +1574,7 @@ BOOL isPad() {
     view.layer.masksToBounds = YES;
 //    view.layer.cornerRadius = view.bounds.size.width/2.0;
     view.layer.cornerRadius = 11;
-    view.backgroundColor = UIColor.clearColor;
+//    view.backgroundColor = UIColor.clearColor;
 }
 
 -(BOOL)isRunning{
@@ -1665,10 +1797,13 @@ BOOL isPad() {
     
     self.arOverlayView.transform = CGAffineTransformMakeScale(1.0 + (translation.x / button.bounds.size.width),
                                                               1.0 + (translation.y / button.bounds.size.height));
-    NSLog(@"Translation: %.0f %.0f",translation.x, translation.y);
+//    NSLog(@"Translation: %.0f %.0f",translation.x, translation.y);
 }
 
 - (IBAction)buttonWasTapped:(id)sender {
     NSLog(@"%s - button tapped",__FUNCTION__);
 }
+
+
+
 @end
